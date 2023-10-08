@@ -35,6 +35,10 @@ const users = {
    ]
 }
 
+function generateId() {
+   return Math.random().toString(36).substr(2, 6);
+}
+
 app.use(express.json());
 app.use(cors());
 
@@ -63,8 +67,10 @@ app.get('/users/:id', (req, res) => {
 
 app.post('/users', (req, res) => {
    const userToAdd = req.body;
+   userToAdd.id = generateId(); 
+   console.log("New User with ID:", userToAdd);
    addUser(userToAdd);
-   res.status(200).end();
+   res.status(201).send(userToAdd);  
 });
 
 function addUser(user){
@@ -90,9 +96,9 @@ app.delete('/users/:id', (req, res) => {
 
    if (userIndex !== -1) {
        users['users_list'].splice(userIndex, 1);
-       res.status(200).send({ message: 'User deleted successfully' });
+       res.status(204).end(); // Successful delete with no content returned
    } else {
-       res.status(404).send('User not found');
+       res.status(404).send('User not found'); // User not found
    }
 });
 
